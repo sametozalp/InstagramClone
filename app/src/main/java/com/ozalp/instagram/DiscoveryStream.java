@@ -7,6 +7,7 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
@@ -22,8 +23,12 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.UploadTask;
 import com.ozalp.instagram.databinding.ActivityDiscoveryStreamBinding;
 import com.ozalp.instagram.databinding.FooterBinding;
 
@@ -78,7 +83,12 @@ public class DiscoveryStream extends AppCompatActivity {
 
                     if(intentFromResult != null){
                         imageData = intentFromResult.getData();
-                        System.out.println("image url " + imageData);
+                        System.out.println("image url:" + imageData);
+
+                        Intent uploadPage = new Intent(getApplicationContext(), UploadPost.class);
+                        uploadPage.putExtra("data",imageData.toString());
+                        startActivity(uploadPage);
+
                     }
                 }
             }
