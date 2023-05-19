@@ -7,38 +7,40 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
+        android:id="@+id/goToMyProfile"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal"
         android:paddingTop="5dp"
         android:paddingBottom="12dp"
+
+
         app:layout_constraintBottom_toBottomOf="parent"
-
-
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints"
         tools:layout_editor_absoluteX="0dp">
 
         <ImageView
-            android:id="@+id/imageView4"
+            android:id="@+id/goToMainStream"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_weight="1"
             app:srcCompat="@drawable/home" />
 
         <ImageView
-            android:id="@+id/imageView5"
+            android:id="@+id/goToDiscoveryStream"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_weight="1"
             app:srcCompat="@drawable/search" />
 
         <ImageView
-            android:id="@+id/imageView6"
+            android:id="@+id/goToFile"
             android:layout_width="25dp"
             android:layout_height="25dp"
             android:layout_weight="1"
+            android:onClick="goToFile"
             app:srcCompat="@drawable/more" />
 
         <ImageView
