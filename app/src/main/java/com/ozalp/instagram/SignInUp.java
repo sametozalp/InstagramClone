@@ -79,7 +79,6 @@ public class SignInUp extends AppCompatActivity {
                             Intent intent = new Intent(getApplicationContext(), DiscoveryStream.class);
                             startActivity(intent);
                             finish();
-
                         }
                     });
         }
