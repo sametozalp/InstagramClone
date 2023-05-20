@@ -1,7 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.Instagram" parent="Theme.Material3.DayNight.NoActionBar">
+    <!-- Dark modu iptal etmek için aşağıdaki kodda Dark modu temsil eden kod yerine Light yazdım -->
+    <style name="Base.Theme.Instagram" parent="Theme.Material3.Light.NoActionBar">
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
-    </style>
+s    </style>
 </resources>

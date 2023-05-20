@@ -130,7 +130,7 @@ public class UploadPost extends AppCompatActivity {
                                         }
                                     });
 
-                                    Intent intent = new Intent(getApplicationContext(),MainStream.class);
+                                    Intent intent = new Intent(getApplicationContext(),DiscoveryStream.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(intent);
                                     finish();
