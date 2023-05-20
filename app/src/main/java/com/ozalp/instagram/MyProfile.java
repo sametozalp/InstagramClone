@@ -3,6 +3,7 @@ package com.ozalp.instagram;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -70,5 +71,21 @@ public class MyProfile extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    public void signoutButton(View view) {
+
+        auth.signOut();
+
+        Intent intent = new Intent(getApplicationContext(),SignInUp.class);
+        startActivity(intent);
+        finish();
+
+        /*
+        Intent intent = new Intent(getApplicationContext(),SignInUp.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+
+         */
     }
 }
