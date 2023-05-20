@@ -78,28 +78,35 @@ public class DiscoveryStream extends AppCompatActivity {
     }
 
     public void recycleData(){
-        firestore.collection("Posts").orderBy("date", Query.Direction.DESCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                if(error!=null){
-                    Toast.makeText(getApplicationContext(), error.getLocalizedMessage(),Toast.LENGTH_LONG).show();
-                }
-
-                if(value != null){
-                    for (DocumentSnapshot snapshot : value.getDocuments()){
-                        Map<String,Object> map = snapshot.getData();
-                        String[] data =  {(String) map.get("email"), (String) map.get("comment"), (String) map.get("downloadUri"), (String) map.get("username"), String.valueOf(map.get("date"))};
-                        System.out.println(data[0]);
-
-                        Post post = new Post(data[0], data[1], data[2], data[3], data[4]);
-                        postArrayList.add(post);
-
+        try {
+            firestore.collection("Posts").orderBy("date", Query.Direction.DESCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                    if(error!=null){
+                        Toast.makeText(getApplicationContext(), error.getLocalizedMessage(),Toast.LENGTH_LONG).show();
                     }
 
-                    postAdapter.notifyDataSetChanged();
+                    if(value != null){
+                        for (DocumentSnapshot snapshot : value.getDocuments()){
+                            Map<String,Object> map = snapshot.getData();
+                            String[] data =  {(String) map.get("email"), (String) map.get("comment"), (String) map.get("downloadUri"), (String) map.get("username"), String.valueOf(map.get("date"))};
+                            System.out.println(data[0]);
+
+                            Post post = new Post(data[0], data[1], data[2], data[3], data[4]);
+                            postArrayList.add(post);
+
+                        }
+
+                        postAdapter.notifyDataSetChanged();
+
+
+                    }
                 }
-            }
-        });
+            });
+
+        }catch (Exception e){
+            Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+        }
     }
 
     public void goToFile(View view){

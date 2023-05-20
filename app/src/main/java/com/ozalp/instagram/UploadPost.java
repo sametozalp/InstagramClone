@@ -98,7 +98,7 @@ public class UploadPost extends AppCompatActivity {
                                                         String email = userMe.getEmail();
                                                         HashMap <String,Object> map = new HashMap<>();
                                                         map.put("downloadUri",downloadUri);
-                                                        map.put("comment",comment);
+                                                        map.put("comment",comment.trim());
                                                         map.put("email",email);
                                                         map.put("username",username);
                                                         map.put("date", FieldValue.serverTimestamp());
@@ -133,7 +133,7 @@ public class UploadPost extends AppCompatActivity {
                                     Intent intent = new Intent(getApplicationContext(),DiscoveryStream.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(intent);
-                                    finish();
+
 
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
