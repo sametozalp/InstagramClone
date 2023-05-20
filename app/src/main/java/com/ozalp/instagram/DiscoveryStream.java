@@ -8,11 +8,14 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.PackageManagerCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.content.Intent;
@@ -27,10 +30,21 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.UploadTask;
 import com.ozalp.instagram.databinding.ActivityDiscoveryStreamBinding;
 import com.ozalp.instagram.databinding.FooterBinding;
+
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DiscoveryStream extends AppCompatActivity {
 
@@ -38,6 +52,10 @@ public class DiscoveryStream extends AppCompatActivity {
     ActivityDiscoveryStreamBinding binding;
     ActivityResultLauncher <Intent> activityResultLauncher;
     ActivityResultLauncher <String> permissionLauncher;
+    RecyclerView discoveryRecycleView;
+    FirebaseFirestore firestore;
+    ArrayList<Post> postArrayList;
+    PostAdapter postAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,9 +64,42 @@ public class DiscoveryStream extends AppCompatActivity {
         View view = binding.getRoot();
         setContentView(view);
 
+        firestore = FirebaseFirestore.getInstance();
+        discoveryRecycleView = binding.discoveryRecycleView;
+        postArrayList = new ArrayList<>();
+
         registerLauncher();
+        recycleData();
 
+        binding.discoveryRecycleView.setLayoutManager(new LinearLayoutManager(this));
+        postAdapter = new PostAdapter(postArrayList);
+        binding.discoveryRecycleView.setAdapter(postAdapter);
 
+    }
+
+    public void recycleData(){
+        firestore.collection("Posts").orderBy("date", Query.Direction.DESCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if(error!=null){
+                    Toast.makeText(getApplicationContext(), error.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+                }
+
+                if(value != null){
+                    for (DocumentSnapshot snapshot : value.getDocuments()){
+                        Map<String,Object> map = snapshot.getData();
+                        String[] data =  {(String) map.get("email"), (String) map.get("comment"), (String) map.get("downloadUri"), (String) map.get("username"), String.valueOf(map.get("date"))};
+                        System.out.println(data[0]);
+
+                        Post post = new Post(data[0], data[1], data[2], data[3], data[4]);
+                        postArrayList.add(post);
+
+                    }
+
+                    postAdapter.notifyDataSetChanged();
+                }
+            }
+        });
     }
 
     public void goToFile(View view){
@@ -109,5 +160,8 @@ public class DiscoveryStream extends AppCompatActivity {
 
     }
 
-
+    public void goToMyProfile(View view){
+        Intent intent = new Intent(getApplicationContext(), MyProfile.class);
+        startActivity(intent);
+    }
 }

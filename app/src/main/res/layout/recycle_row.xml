@@ -1,25 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:orientation="vertical"
-    android:padding="15dp"
+    android:paddingTop="5dp"
+    android:paddingBottom="10dp"
+    android:paddingLeft="15dp"
+    android:paddingRight="15dp"
     android:layout_height="wrap_content">
 
     <TextView
+        android:id="@+id/email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="username"
         android:textColor="@color/black"
-        android:textSize="25dp"
+        android:textSize="17dp"
         android:textStyle="bold"></TextView>
 
     <ImageView
-        android:id="@+id/post"
-        android:layout_width="350dp"
+        android:id="@+id/image"
+        android:layout_width="400dp"
         android:layout_height="200dp"
-        android:layout_marginTop="5dp"
-        android:layout_gravity="center"></ImageView>
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"></ImageView>
 
     <TextView
         android:id="@+id/like"
@@ -30,18 +35,26 @@
         android:textStyle="bold"></TextView>
 
     <TextView
+        android:id="@+id/username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="username"
         android:textSize="15dp"
-        android:textStyle="bold"></TextView>
+        android:textStyle="bold"
+        tools:ignore="TextSizeCheck"></TextView>
 
     <TextView
+        android:id="@+id/comment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="18.05.2023"
-        android:textStyle="italic"
         android:textSize="12dp"
-        ></TextView>
+        android:textStyle="italic"
+        tools:ignore="TextSizeCheck"></TextView>
 
 </LinearLayout>
