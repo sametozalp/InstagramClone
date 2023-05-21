@@ -1,8 +1,10 @@
 package com.ozalp.instagram;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,6 +24,7 @@ import com.squareup.picasso.Picasso;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class MyProfile extends AppCompatActivity {
 
@@ -75,17 +78,29 @@ public class MyProfile extends AppCompatActivity {
 
     public void signoutButton(View view) {
 
-        auth.signOut();
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        alertDialog.setTitle("LogOut?");
+        alertDialog.setMessage("Do you want to log out?");
+        alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                try{
+                    auth.signOut();
 
-        Intent intent = new Intent(getApplicationContext(),SignInUp.class);
-        startActivity(intent);
-        finish();
+                    Intent intent = new Intent(MyProfile.this,SignInUp.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
 
-        /*
-        Intent intent = new Intent(getApplicationContext(),SignInUp.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+                }catch (Exception e){
+                    Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+                }
+            }
+        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        }).show();
 
-         */
     }
 }
