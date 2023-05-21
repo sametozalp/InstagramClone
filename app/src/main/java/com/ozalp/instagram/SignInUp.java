@@ -83,4 +83,10 @@ public class SignInUp extends AppCompatActivity {
                     });
         }
     }
+
+    public void goToCreateAccount(View view) {
+        Intent intent = new Intent(getApplicationContext(), CreateAccount.class);
+        startActivity(intent);
+    }
 }
+

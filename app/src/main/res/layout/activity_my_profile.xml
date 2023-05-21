@@ -100,15 +100,26 @@
         android:textStyle="bold"
         android:id="@+id/name"
         ></TextView>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Name Surname"
+        android:text="Bio"
         android:layout_marginTop="3dp"
         android:id="@+id/bio"
         ></TextView>
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Edit Profile"></Button>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/myProfileRecycleView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"></androidx.recyclerview.widget.RecyclerView>
 
 
 

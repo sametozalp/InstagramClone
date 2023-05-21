@@ -1,6 +1,7 @@
 package com.ozalp.instagram;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,11 +17,15 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.ozalp.instagram.databinding.ActivityMyProfileBinding;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +36,8 @@ public class MyProfile extends AppCompatActivity {
     ActivityMyProfileBinding binding;
     FirebaseFirestore firestore;
     FirebaseAuth auth;
+    ArrayList<Post> postArrayList;
+    PostAdapter postAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,8 +47,47 @@ public class MyProfile extends AppCompatActivity {
 
         firestore = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
+        postArrayList = new ArrayList<>();
+        postAdapter = new PostAdapter(postArrayList);
+
         getMyProfileData();
+        myProfileRecycleGetData();
     }
+
+    private void myProfileRecycleGetData(){
+        try {
+            firestore.collection("Posts").orderBy("date", Query.Direction.DESCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                    if(error!=null){
+                        System.out.println(error.getMessage());
+                        Toast.makeText(getApplicationContext(), error.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+                    }
+
+                    if(value != null){
+                        for (DocumentSnapshot snapshot : value.getDocuments()){
+                            Map<String,Object> map = snapshot.getData();
+                            String[] data =  {(String) map.get("email"), (String) map.get("comment"), (String) map.get("downloadUri"), (String) map.get("username"), String.valueOf(map.get("date"))};
+                            System.out.println(data[0]);
+
+                            Post post = new Post(data[0], data[1], data[2], data[3], data[4]);
+                            postArrayList.add(post);
+
+                        }
+
+                        postAdapter.notifyDataSetChanged();
+
+
+                    }
+                }
+            });
+
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+        }
+    }
+
     private void getMyProfileData(){
         String myEmail = auth.getCurrentUser().getEmail();
         System.out.println(myEmail);
