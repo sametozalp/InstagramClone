@@ -99,6 +99,7 @@ public class CreateAccount extends AppCompatActivity {
                                                                         map.put("followers", 0);
                                                                         map.put("following", 0);
                                                                         map.put("posts", 0);
+                                                                        map.put("bio","");
                                                                         map.put("name", name);
                                                                         map.put("profilePhoto",
                                                                                 "https://firebasestorage.googleapis.com/v0/b/instagram-155fd.appspot.com/o/nophoto.jpg?alt=media&token=3596685c-39ae-48bc-a5b1-cee53732dd12");

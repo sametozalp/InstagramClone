@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EditProfile">
+
+    <EditText
+        android:id="@+id/nameEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Edit name"
+        android:inputType="text"
+        tools:layout_editor_absoluteX="102dp"
+        tools:layout_editor_absoluteY="99dp" />
+
+    <EditText
+        android:id="@+id/emailEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:ems="10"
+        android:hint="Edit email"
+        android:inputType="text"
+        tools:layout_editor_absoluteX="101dp"
+        tools:layout_editor_absoluteY="165dp" />
+
+    <EditText
+        android:id="@+id/usernameEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:ems="10"
+        android:hint="Edit username"
+        android:inputType="text"
+        tools:layout_editor_absoluteX="104dp"
+        tools:layout_editor_absoluteY="248dp" />
+
+    <EditText
+        android:id="@+id/passwordEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:ems="10"
+        android:hint="Edit password"
+        android:inputType="text"
+        tools:layout_editor_absoluteX="104dp"
+        tools:layout_editor_absoluteY="248dp" />
+
+    <EditText
+        android:id="@+id/bioEditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:ems="10"
+        android:hint="Edit biography"
+        android:inputType="text"
+        tools:layout_editor_absoluteX="108dp"
+        tools:layout_editor_absoluteY="338dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edit profile"
+        android:layout_marginTop="15dp"
+        android:onClick="editProfile"></Button>
+
+    <TextView
+        android:id="@+id/signUpDateText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="SignUpDate"
+        tools:layout_editor_absoluteX="161dp"
+        tools:layout_editor_absoluteY="441dp" />
+</LinearLayout>

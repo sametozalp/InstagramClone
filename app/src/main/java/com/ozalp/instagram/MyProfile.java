@@ -54,6 +54,11 @@ public class MyProfile extends AppCompatActivity {
         myProfileRecycleGetData();
     }
 
+    public void goToEditProfile(View view){
+        Intent intent = new Intent(getApplicationContext(),EditProfile.class);
+        startActivity(intent);
+    }
+
     private void myProfileRecycleGetData(){
         try {
             firestore.collection("Posts").orderBy("date", Query.Direction.DESCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {

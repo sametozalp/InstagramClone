@@ -113,6 +113,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:onClick="goToEditProfile"
         android:text="Edit Profile"></Button>
 
     <androidx.recyclerview.widget.RecyclerView
