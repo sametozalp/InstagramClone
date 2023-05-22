@@ -95,7 +95,7 @@ public class CreateAccount extends AppCompatActivity {
                                                                     public void onSuccess(AuthResult authResult) {
 
                                                                         HashMap<String, Object> map = new HashMap<>();
-                                                                        map.put("password", password);
+                                                                        //map.put("password", password);
                                                                         map.put("followers", 0);
                                                                         map.put("following", 0);
                                                                         map.put("posts", 0);

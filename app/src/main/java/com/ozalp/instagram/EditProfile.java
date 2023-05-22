@@ -103,6 +103,7 @@ public class EditProfile extends AppCompatActivity {
         String tempName = binding.nameEditText.getText().toString();
         String tempUsername = binding.usernameEditText.getText().toString();
         String tempBio = binding.bioEditText.getText().toString();
+        String tempPassword = binding.passwordEditText.getText().toString();
         boolean usernameChanged = false;
 
         Map mapTemp = new HashMap<>();
@@ -132,6 +133,20 @@ public class EditProfile extends AppCompatActivity {
             firestore.collection("Users").document(username).set(mapTemp,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void unused) {
+                    if(!tempPassword.isEmpty()){
+                        auth.getCurrentUser().updatePassword(tempPassword).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                finish();
+                                Toast.makeText(getApplicationContext(),"Edited profile", Toast.LENGTH_SHORT).show();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
                     finish();
                     Toast.makeText(getApplicationContext(),"Edited profile", Toast.LENGTH_SHORT).show();
                 }
@@ -142,33 +157,62 @@ public class EditProfile extends AppCompatActivity {
                 }
             });
         }else {
-            map.putAll(mapTemp);
-            firestore.collection("Users").document(tempUsername).set(map,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+            firestore.collection("Users").whereEqualTo("username",tempUsername).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                 @Override
-                public void onSuccess(Void unused) {
-                    firestore.collection("Users").document(username).delete().addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
+                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                    if(!queryDocumentSnapshots.isEmpty()){
+                        Toast.makeText(getApplicationContext(),"The username is use",Toast.LENGTH_LONG).show();
+                    }else{
+                        map.putAll(mapTemp);
+                        firestore.collection("Users").document(tempUsername).set(map,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                firestore.collection("Users").document(username).delete().addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
 
-                        }
-                    });
-                    finish();
-                    Toast.makeText(getApplicationContext(),"Edited profile", Toast.LENGTH_SHORT).show();
+                                    }
+                                }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+
+                                        if(!tempPassword.isEmpty()){
+                                            auth.getCurrentUser().updatePassword(tempPassword).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void unused) {
+                                                    finish();
+                                                    Toast.makeText(getApplicationContext(),"Edited profile", Toast.LENGTH_SHORT).show();
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+                                                }
+                                            });
+                                        }else{
+                                            finish();
+                                            Toast.makeText(getApplicationContext(),"Edited profile", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                });
+
+                            }
+
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
                 }
-
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(),"The username is use",Toast.LENGTH_LONG).show();
                 }
             });
         }
-
-
-
-
-
-
     }
 
 
