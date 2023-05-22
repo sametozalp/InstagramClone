@@ -3,6 +3,7 @@ package com.ozalp.instagram;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
@@ -31,7 +33,8 @@ public class EditProfile extends AppCompatActivity {
     FirebaseAuth auth;
     String name, email,username,signUpDate,bio;
     String rEmail;
-    Map<String,Object> allData;
+    Map<String,Object> map;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +48,6 @@ public class EditProfile extends AppCompatActivity {
         emailEditText = binding.emailEditText;
         signUpDateText = binding.signUpDateText;
         passwordEditText = binding.passwordEditText;
-
-        allData = new HashMap<>();
 
         firestore = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
@@ -63,8 +64,7 @@ public class EditProfile extends AppCompatActivity {
                     if(queryDocumentSnapshots.isEmpty()){
                         Toast.makeText(getApplicationContext(),"No Data",Toast.LENGTH_LONG).show();
                     }else {
-                        allData = queryDocumentSnapshots.getDocuments().get(0).getData();
-                        Map <String, Object> map = queryDocumentSnapshots.getDocuments().get(0).getData();
+                        map = queryDocumentSnapshots.getDocuments().get(0).getData();
                         System.out.println(map);
                         name = map.get("name").toString();
                         email = map.get("email").toString();
@@ -103,53 +103,69 @@ public class EditProfile extends AppCompatActivity {
         String tempName = binding.nameEditText.getText().toString();
         String tempUsername = binding.usernameEditText.getText().toString();
         String tempBio = binding.bioEditText.getText().toString();
-        Map map = new HashMap<>();
+        boolean usernameChanged = false;
+
+        Map mapTemp = new HashMap<>();
 
         if(!name.equals(tempName)){
             if(!tempName.isEmpty()){
-                map.put("name",tempName);
+                mapTemp.put("name",tempName);
             }else {
                 Toast.makeText(getApplicationContext(),"Name value cannot be left blank",Toast.LENGTH_LONG).show();
             }
         }
 
         if(!bio.equals(tempBio)){
-            map.put("bio", tempBio);
+            mapTemp.put("bio", tempBio);
         }
 
         if(!username.equals(tempUsername)){
             if(!tempUsername.isEmpty()){
-                map.put("username",tempUsername);
+                mapTemp.put("username",tempUsername);
+                usernameChanged = true;
             }else {
                 Toast.makeText(getApplicationContext(),"Username value cannot be left blank",Toast.LENGTH_LONG).show();
             }
-        }else{
-            map.put("username",username);
         }
 
-        firestore.collection("Users").document(username).set(map,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void unused) {
-                username = tempUsername;
-                firestore.collection("Users").document(username).set(map,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void unused) {
-                        Toast.makeText(getApplicationContext(),"Edited profile",Toast.LENGTH_LONG).show();
-                        finish();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
-                    }
-                });
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
-            }
-        });
+        if(usernameChanged == false){
+            firestore.collection("Users").document(username).set(mapTemp,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void unused) {
+                    finish();
+                    Toast.makeText(getApplicationContext(),"Edited profile", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+                }
+            });
+        }else {
+            map.putAll(mapTemp);
+            firestore.collection("Users").document(tempUsername).set(map,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void unused) {
+                    firestore.collection("Users").document(username).delete().addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                        }
+                    });
+                    finish();
+                    Toast.makeText(getApplicationContext(),"Edited profile", Toast.LENGTH_SHORT).show();
+                }
+
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+
+
+
 
 
 

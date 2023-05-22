@@ -94,37 +94,39 @@ public class MyProfile extends AppCompatActivity {
     }
 
     private void getMyProfileData(){
-        String myEmail = auth.getCurrentUser().getEmail();
-        System.out.println(myEmail);
-        firestore.collection("Users").whereEqualTo("email",myEmail).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                if(!queryDocumentSnapshots.isEmpty()){
-                    List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
-                    String username= (String) list.get(0).getData().get("username");
-                    Object post = list.get(0).getData().get("posts");
-                    Object followers = list.get(0).getData().get("followers");
-                    Object following = list.get(0).getData().get("following");
-                    Object profilePhoto = list.get(0).getData().get("profilePhoto");
-                    Object name = list.get(0).getData().get("name");
-                    Object bio = list.get(0).getData().get("bio");
+        try {
+            String myEmail = auth.getCurrentUser().getEmail();
+            System.out.println(myEmail);
+            firestore.collection("Users").whereEqualTo("email",myEmail).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException error) {
+                    if(!queryDocumentSnapshots.isEmpty()){
+                        List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
+                        String username= (String) list.get(0).getData().get("username");
+                        Object post = list.get(0).getData().get("posts");
+                        Object followers = list.get(0).getData().get("followers");
+                        Object following = list.get(0).getData().get("following");
+                        Object profilePhoto = list.get(0).getData().get("profilePhoto");
+                        Object name = list.get(0).getData().get("name");
+                        Object bio = list.get(0).getData().get("bio");
 
 
-                    binding.postData.setText(post + "\nPosts");
-                    binding.followersData.setText(followers + "\nFollowers");
-                    binding.followingData.setText(following + "\nFollowing");
-                    Picasso.get().load(Uri.parse(String.valueOf(profilePhoto))).into(binding.profilePhoto);
-                    binding.username.setText(username);
-                    binding.name.setText((String) name);
-                    binding.bio.setText((String) bio);
+                        binding.postData.setText(post + "\nPosts");
+                        binding.followersData.setText(followers + "\nFollowers");
+                        binding.followingData.setText(following + "\nFollowing");
+                        Picasso.get().load(Uri.parse(String.valueOf(profilePhoto))).into(binding.profilePhoto);
+                        binding.username.setText(username);
+                        binding.name.setText((String) name);
+                        binding.bio.setText((String) bio);
+                    }
+                    if(error!= null){
+                        Toast.makeText(getApplicationContext(),"No data", Toast.LENGTH_LONG).show();
+                    }
                 }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
-            }
-        });
+            });
+        }catch (Exception e){
+            Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void signoutButton(View view) {
