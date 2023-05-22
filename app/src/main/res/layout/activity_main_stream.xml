@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainStream">
+    tools:context=".pages.MainStream">
 
     <include
         android:id="@+id/include"

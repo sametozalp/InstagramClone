@@ -1,8 +1,10 @@
-package com.ozalp.instagram;
+package com.ozalp.instagram.pages;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.ozalp.instagram.R;
 
 public class MainStream extends AppCompatActivity {
 

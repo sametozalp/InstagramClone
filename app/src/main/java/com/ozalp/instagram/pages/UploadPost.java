@@ -1,4 +1,4 @@
-package com.ozalp.instagram;
+package com.ozalp.instagram.pages;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,14 +22,10 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.UploadTask;
 import com.ozalp.instagram.databinding.ActivityUploadPostBinding;
-import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 public class UploadPost extends AppCompatActivity {
 
@@ -83,9 +79,6 @@ public class UploadPost extends AppCompatActivity {
                                         @Override
                                         public void onSuccess(Uri uri) {
                                             String downloadUri = uri.toString();
-
-
-
                                             String myEmail = auth.getCurrentUser().getEmail();
                                             firestore.collection("Users").whereEqualTo("email",myEmail).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                                                 @Override
@@ -93,12 +86,14 @@ public class UploadPost extends AppCompatActivity {
                                                     if(!queryDocumentSnapshots.isEmpty()){
                                                         List<DocumentSnapshot> list = queryDocumentSnapshots.getDocuments();
                                                         String username= (String) list.get(0).getData().get("username");
+                                                        String profilPhoto = (String) list.get(0).getData().get("profilePhoto");
                                                         String comment = binding.commentText.getText().toString();
                                                         FirebaseUser userMe = auth.getCurrentUser();
                                                         String email = userMe.getEmail();
                                                         HashMap <String,Object> map = new HashMap<>();
                                                         map.put("downloadUri",downloadUri);
                                                         map.put("comment",comment.trim());
+                                                        map.put("profilePhoto",profilPhoto);
                                                         map.put("email",email);
                                                         map.put("username",username);
                                                         map.put("date", FieldValue.serverTimestamp());

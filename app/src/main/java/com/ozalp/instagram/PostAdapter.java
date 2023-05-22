@@ -45,6 +45,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
             holder.recycleRowBinding.comment.setVisibility(View.GONE);
         }
         Picasso.get().load(postArrayList.get(position).downloadUri).into(holder.recycleRowBinding.image);
+        Picasso.get().load(postArrayList.get(position).profilePhoto).into(holder.recycleRowBinding.profilePhoto);
     }
 
     @Override

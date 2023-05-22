@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:padding="15dp"
     android:orientation="vertical"
-    tools:context=".MyProfile">
+    tools:context=".pages.MyProfile">
 
 
     <LinearLayout
@@ -50,12 +50,13 @@
             app:cardCornerRadius="80dp"
             android:elevation="10dp">
 
-        <ImageView
-            android:id="@+id/profilePhoto"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_weight="0.5"
-            app:srcCompat="@drawable/nophoto"></ImageView>
+            <ImageView
+                android:id="@+id/profilePhoto"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_weight="0.5"
+                android:longClickable="true"
+                app:srcCompat="@drawable/nophoto"></ImageView>
         </androidx.cardview.widget.CardView>
 
         <TextView

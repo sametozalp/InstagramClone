@@ -1,6 +1,5 @@
-package com.ozalp.instagram;
+package com.ozalp.instagram.pages;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,8 +12,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -22,14 +19,14 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.ozalp.instagram.Post;
+import com.ozalp.instagram.PostAdapter;
 import com.ozalp.instagram.databinding.ActivityMyProfileBinding;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 public class MyProfile extends AppCompatActivity {
 
@@ -38,6 +35,8 @@ public class MyProfile extends AppCompatActivity {
     FirebaseAuth auth;
     ArrayList<Post> postArrayList;
     PostAdapter postAdapter;
+    ImageView profilePhoto;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,46 +50,23 @@ public class MyProfile extends AppCompatActivity {
         postAdapter = new PostAdapter(postArrayList);
 
         getMyProfileData();
-        myProfileRecycleGetData();
+
+        profilePhoto = binding.profilePhoto;
+        profilePhoto.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                System.out.println("select profile photo");
+                return true;
+            }
+        });
+
     }
+
+
 
     public void goToEditProfile(View view){
         Intent intent = new Intent(getApplicationContext(),EditProfile.class);
         startActivity(intent);
-    }
-
-    private void myProfileRecycleGetData(){
-        try {
-            firestore.collection("Posts").orderBy("date", Query.Direction.DESCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
-                @Override
-                public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                    if(error!=null){
-                        System.out.println(error.getMessage());
-                        Toast.makeText(getApplicationContext(), error.getLocalizedMessage(),Toast.LENGTH_LONG).show();
-                    }
-
-                    if(value != null){
-                        for (DocumentSnapshot snapshot : value.getDocuments()){
-                            Map<String,Object> map = snapshot.getData();
-                            String[] data =  {(String) map.get("email"), (String) map.get("comment"), (String) map.get("downloadUri"), (String) map.get("username"), String.valueOf(map.get("date"))};
-                            System.out.println(data[0]);
-
-                            Post post = new Post(data[0], data[1], data[2], data[3], data[4]);
-                            postArrayList.add(post);
-
-                        }
-
-                        postAdapter.notifyDataSetChanged();
-
-
-                    }
-                }
-            });
-
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-            Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
-        }
     }
 
     private void getMyProfileData(){
@@ -154,6 +130,5 @@ public class MyProfile extends AppCompatActivity {
                 dialog.cancel();
             }
         }).show();
-
     }
 }

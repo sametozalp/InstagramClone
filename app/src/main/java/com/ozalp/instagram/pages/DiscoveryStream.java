@@ -1,23 +1,18 @@
-package com.ozalp.instagram;
+package com.ozalp.instagram.pages;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
-import static android.content.pm.PackageManager.PERMISSION_DENIED;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.content.PackageManagerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -26,9 +21,6 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.material.snackbar.BaseTransientBottomBar;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -36,14 +28,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.UploadTask;
+import com.ozalp.instagram.Post;
+import com.ozalp.instagram.PostAdapter;
 import com.ozalp.instagram.databinding.ActivityDiscoveryStreamBinding;
-import com.ozalp.instagram.databinding.FooterBinding;
 
-import java.sql.Date;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 public class DiscoveryStream extends AppCompatActivity {
@@ -89,10 +78,10 @@ public class DiscoveryStream extends AppCompatActivity {
                     if(value != null){
                         for (DocumentSnapshot snapshot : value.getDocuments()){
                             Map<String,Object> map = snapshot.getData();
-                            String[] data =  {(String) map.get("email"), (String) map.get("comment"), (String) map.get("downloadUri"), (String) map.get("username"), String.valueOf(map.get("date"))};
+                            String[] data =  {(String) map.get("email"), (String) map.get("comment"), (String) map.get("downloadUri"), (String) map.get("username"), String.valueOf(map.get("date")), (String)map.get("profilePhoto")};
                             System.out.println(data[0]);
 
-                            Post post = new Post(data[0], data[1], data[2], data[3], data[4]);
+                            Post post = new Post(data[0], data[1], data[2], data[3], data[4],data[5]);
                             postArrayList.add(post);
 
                         }

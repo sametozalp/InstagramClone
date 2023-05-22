@@ -1,4 +1,4 @@
-package com.ozalp.instagram;
+package com.ozalp.instagram.pages;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
