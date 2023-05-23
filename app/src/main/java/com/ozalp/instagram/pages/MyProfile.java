@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -75,7 +76,7 @@ public class MyProfile extends AppCompatActivity {
         postAdapter = new PostAdapter(postArrayList);
 
         getMyProfileData();
-
+        recycleData();
         registerLauncher();
         profilePhoto = binding.profilePhoto;
 
@@ -107,6 +108,44 @@ public class MyProfile extends AppCompatActivity {
             }
         });
 
+        binding.discoveryRecycleView.setLayoutManager(new LinearLayoutManager(this));
+        postAdapter = new PostAdapter(postArrayList);
+        binding.discoveryRecycleView.setAdapter(postAdapter);
+    }
+
+    public void recycleData(){
+        try {
+            String email = auth.getCurrentUser().getEmail();
+            firestore.collection("Posts").whereEqualTo("email",email).orderBy("date", Query.Direction.DESCENDING).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                    if(error!=null){
+                        System.out.println(error.getMessage());
+                        Toast.makeText(getApplicationContext(), error.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+                    }
+
+                    if(value != null){
+                        for (DocumentSnapshot snapshot : value.getDocuments()){
+                            Map<String,Object> map = snapshot.getData();
+                            String[] data =  {(String) map.get("email"), (String) map.get("comment"), (String) map.get("downloadUri"), (String) map.get("username"), String.valueOf(map.get("date")), (String)map.get("profilePhoto")};
+                            System.out.println(data[0]);
+
+                            Post post = new Post(data[0], data[1], data[2], data[3], data[4],data[5]);
+                            postArrayList.add(post);
+
+                        }
+
+                        postAdapter.notifyDataSetChanged();
+
+
+                    }
+                }
+            });
+
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+            Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+        }
     }
 
     public void goToEditProfile(View view){
