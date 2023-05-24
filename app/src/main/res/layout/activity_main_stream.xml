@@ -12,18 +12,16 @@
         android:id="@+id/include"
         layout="@layout/top_bar"></include>
 
-
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/discoveryRecycleView"
+        android:id="@+id/mainRecycleView"
         android:layout_width="match_parent"
         android:layout_weight="1"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="71dp"
-        android:layout_height="0dp"/>
+        android:layout_height="match_parent" />
 
     <include
         layout="@layout/footer"></include>
+
+
 
 
 </LinearLayout>

@@ -40,7 +40,7 @@ public class SignInUp extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
         if(user != null){
-            Intent intent = new Intent(getApplicationContext(),DiscoveryStream.class);
+            Intent intent = new Intent(getApplicationContext(),MainStream.class);
             startActivity(intent);
             finish();
         }
@@ -68,7 +68,7 @@ public class SignInUp extends AppCompatActivity {
                     }).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                         @Override
                         public void onSuccess(AuthResult authResult) {
-                            Intent intent = new Intent(getApplicationContext(), DiscoveryStream.class);
+                            Intent intent = new Intent(getApplicationContext(), MainStream.class);
                             startActivity(intent);
                             finish();
                         }

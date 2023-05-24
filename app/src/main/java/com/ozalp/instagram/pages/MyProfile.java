@@ -185,9 +185,10 @@ public class MyProfile extends AppCompatActivity {
     }
 
     public void goToEditProfile(View view){
+        //Follow
         if(!(takenUsername == null)){
 
-        }else{
+        }else{ //Edit profile
             Intent intent = new Intent(getApplicationContext(),EditProfile.class);
             startActivity(intent);
         }
