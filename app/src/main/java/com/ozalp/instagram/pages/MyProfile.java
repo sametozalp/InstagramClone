@@ -246,49 +246,49 @@ public class MyProfile extends AppCompatActivity {
     private void getMyProfileData(){
         try {
             if(takenUsername != null){
-                firestore.collection("Users").whereEqualTo("username",takenUsername).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                firestore.collection("Users").whereEqualTo("username",takenUsername).addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        Map takenMap = new HashMap<>();
-                        takenMap = queryDocumentSnapshots.getDocuments().get(0).getData();
-                        Object post = takenMap.get("posts");
-                        Object followers = takenMap.get("followers");
-                        Object following = takenMap.get("following");
-                        Object profilePhoto = takenMap.get("profilePhoto");
-                        Object name = takenMap.get("name");
-                        Object bio = takenMap.get("bio");
-                        Object email = takenMap.get("email");
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if(!value.isEmpty()){
+                            Map takenMap = new HashMap<>();
+                            takenMap = value.getDocuments().get(0).getData();
+                            Object post = takenMap.get("posts");
+                            Object followers = takenMap.get("followers");
+                            Object following = takenMap.get("following");
+                            Object profilePhoto = takenMap.get("profilePhoto");
+                            Object name = takenMap.get("name");
+                            Object bio = takenMap.get("bio");
+                            Object email = takenMap.get("email");
 
-                        String myEmail = auth.getCurrentUser().getEmail();
-                        if(myEmail.equals(email)){
-                            binding.goToEditProfile.setText("Edit profile");
+                            String myEmail = auth.getCurrentUser().getEmail();
+                            if(myEmail.equals(email)){
+                                binding.goToEditProfile.setText("Edit profile");
 
                                 Intent intent = new Intent(getApplicationContext(), EditProfile.class);
                                 startActivity(intent);
 
 
-                            binding.goToEditProfile.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Intent intent = new Intent(getApplicationContext(),EditProfile.class);
-                                    startActivity(intent);
-                                }
-                            });
+                                binding.goToEditProfile.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        Intent intent = new Intent(getApplicationContext(),EditProfile.class);
+                                        startActivity(intent);
+                                    }
+                                });
 
+                            }
+
+                            binding.postData.setText(post + "\nPosts");
+                            binding.followersData.setText(followers + "\nFollowers");
+                            binding.followingData.setText(following + "\nFollowing");
+                            Picasso.get().load(Uri.parse(String.valueOf(profilePhoto))).into(binding.profilePhoto);
+                            binding.username.setText(takenUsername);
+                            binding.name.setText((String) name);
+                            binding.bio.setText((String) bio);
                         }
-
-                        binding.postData.setText(post + "\nPosts");
-                        binding.followersData.setText(followers + "\nFollowers");
-                        binding.followingData.setText(following + "\nFollowing");
-                        Picasso.get().load(Uri.parse(String.valueOf(profilePhoto))).into(binding.profilePhoto);
-                        binding.username.setText(takenUsername);
-                        binding.name.setText((String) name);
-                        binding.bio.setText((String) bio);
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_SHORT).show();
+                        if(error != null){
+                            Toast.makeText(getApplicationContext(), error.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+                        }
                     }
                 });
             }else{
