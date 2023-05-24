@@ -207,6 +207,24 @@ public class MyProfile extends AppCompatActivity {
                         Object profilePhoto = takenMap.get("profilePhoto");
                         Object name = takenMap.get("name");
                         Object bio = takenMap.get("bio");
+                        Object email = takenMap.get("email");
+
+                        String myEmail = auth.getCurrentUser().getEmail();
+                        if(myEmail.equals(email)){
+                            binding.goToEditProfile.setText("Edit profile");
+                            /*
+                                Intent intent = new Intent(getApplicationContext(), EditProfile.class);
+                                startActivity(intent);
+                             */
+
+                            binding.goToEditProfile.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(getApplicationContext(),EditProfile.class);
+                                    startActivity(intent);
+                                }
+                            });
+                        }
 
 
                         binding.postData.setText(post + "\nPosts");
