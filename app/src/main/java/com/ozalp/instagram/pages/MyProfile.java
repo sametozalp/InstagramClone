@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -31,6 +32,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
@@ -187,7 +189,54 @@ public class MyProfile extends AppCompatActivity {
     public void goToEditProfile(View view){
         //Follow
         if(!(takenUsername == null)){
+            goToEditProfile.setText("Following");
+            goToEditProfile.setBackgroundColor(Color.GRAY);
+            goToEditProfile.setEnabled(false);
 
+            String email = auth.getCurrentUser().getEmail();
+            firestore.collection("Users").whereEqualTo("email",email).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                @Override
+                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                    String username = (String) queryDocumentSnapshots.getDocuments().get(0).getData().get("username");
+                    List l = new ArrayList();
+                    l.add(takenUsername);
+                    Map m = new HashMap<>();
+                    m.put("Following",l);
+                    m.put("following",FieldValue.increment(1));
+                    firestore.collection("Users").document(username).set(m,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void unused) {
+                            List aList = new ArrayList<>();
+                            aList.add(username);
+                            Map aMap = new HashMap();
+                            aMap.put("Followers",aList);
+                            aMap.put("followers",FieldValue.increment(1));
+                            firestore.collection("Users").document(takenUsername).set(aMap, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG);
+                                }
+                            });
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG);
+                        }
+                    });
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG);
+                }
+            });
+            goToEditProfile.setEnabled(true);
         }else{ //Edit profile
             Intent intent = new Intent(getApplicationContext(),EditProfile.class);
             startActivity(intent);
@@ -213,10 +262,10 @@ public class MyProfile extends AppCompatActivity {
                         String myEmail = auth.getCurrentUser().getEmail();
                         if(myEmail.equals(email)){
                             binding.goToEditProfile.setText("Edit profile");
-                            /*
+
                                 Intent intent = new Intent(getApplicationContext(), EditProfile.class);
                                 startActivity(intent);
-                             */
+
 
                             binding.goToEditProfile.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -225,8 +274,8 @@ public class MyProfile extends AppCompatActivity {
                                     startActivity(intent);
                                 }
                             });
-                        }
 
+                        }
 
                         binding.postData.setText(post + "\nPosts");
                         binding.followersData.setText(followers + "\nFollowers");

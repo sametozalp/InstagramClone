@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -117,4 +118,8 @@ public class MainStream extends AppCompatActivity {
         }
     }
 
+    public void goToMyProfile(View view){
+        Intent intent = new Intent(getApplicationContext(), MyProfile.class);
+        startActivity(intent);
+    }
 }
