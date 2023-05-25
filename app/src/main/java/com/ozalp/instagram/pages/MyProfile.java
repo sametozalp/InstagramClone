@@ -87,15 +87,12 @@ public class MyProfile extends AppCompatActivity {
         takenUsername = takeUsernameIntent.getStringExtra("sendUsername");
         System.out.println(takenUsername);
 
-        if(!(takenUsername == null)){
-            binding.signOutButton.setVisibility(View.GONE);
-            binding.goToEditProfile.setText("Follow");
-
-        }
         getMyProfileData();
         recycleData();
         registerLauncher();
         profilePhoto = binding.profilePhoto;
+
+        editFollowersAndFollowing();
 
         profilePhoto.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -128,6 +125,91 @@ public class MyProfile extends AppCompatActivity {
         binding.discoveryRecycleView.setLayoutManager(new LinearLayoutManager(this));
         postAdapter = new PostAdapter(postArrayList);
         binding.discoveryRecycleView.setAdapter(postAdapter);
+    }
+
+    private void editFollowersAndFollowing(){
+
+        if(!(takenUsername == null)){
+            try{
+                List followersList = new ArrayList();
+                binding.signOutButton.setVisibility(View.GONE);
+                binding.goToEditProfile.setText("Follow");
+
+                String email = auth.getCurrentUser().getEmail();
+                firestore.collection("Users").whereEqualTo("email",email).get().addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        //My username
+                        String username = (String) queryDocumentSnapshots.getDocuments().get(0).getData().get("username");
+                        firestore.collection("Users").whereEqualTo("username",takenUsername).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                //His follower list
+                                followersList.add(queryDocumentSnapshots.getDocuments().get(0).getData().get("Followers"));
+                                System.out.println(queryDocumentSnapshots.getDocuments().get(0).getData().get("Followers"));
+                                List followersListGet = new ArrayList();
+                                followersListGet = (List) followersList.get(0);
+                                System.out.println(followersListGet);
+
+                                if(followersListGet.contains(username)){
+                                    binding.goToEditProfile.setText("Following");
+                                    binding.goToEditProfile.setBackgroundColor(Color.GRAY);
+                                    goToEditProfile.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            Map q = new HashMap();
+                                            q.put("Following",q.put("Following", FieldValue.arrayRemove(username)));
+                                            q.put("following",FieldValue.increment(-1));
+                                            firestore.collection("Users").document(username).set(q,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void unused) {
+                                                    Map p = new HashMap();
+                                                    p.put("Followers",p.put("Followers",FieldValue.arrayRemove(username)));
+                                                    p.put("followers",FieldValue.increment(-1));
+
+                                                    firestore.collection("Users").document(takenUsername).set(p,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void unused) {
+                                                            binding.goToEditProfile.setText("Follow");
+                                                            binding.goToEditProfile.setBackgroundColor(Color.parseColor("#6200ee"));
+                                                        }
+                                                    }).addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+                                                        }
+                                                    });
+                                                }
+                                            }).addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                });
+            }catch (Exception e){
+                System.out.println(e.getMessage());
+                Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+            }
+        }else {
+            goToEditProfile.setOnClickListener(null);
+        }
     }
 
     public void recycleData(){
@@ -189,6 +271,7 @@ public class MyProfile extends AppCompatActivity {
     public void goToEditProfile(View view){
         //Follow
         if(!(takenUsername == null)){
+
             goToEditProfile.setText("Following");
             goToEditProfile.setBackgroundColor(Color.GRAY);
             goToEditProfile.setEnabled(false);

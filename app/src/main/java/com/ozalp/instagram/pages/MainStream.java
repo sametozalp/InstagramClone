@@ -58,54 +58,66 @@ public class MainStream extends AppCompatActivity {
 
     public void recycleData(){
         try {
-
             String email = auth.getCurrentUser().getEmail();
             firestore.collection("Users").whereEqualTo("email",email).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
                 @Override
                 public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                    String username = (String) queryDocumentSnapshots.getDocuments().get(0).getData().get("username");
-                    firestore.collection("Users").whereEqualTo("username",username).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                        @Override
-                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                            List followList = new ArrayList();
-                            followList = (List) queryDocumentSnapshots.getDocuments().get(0).getData().get("Following");
-                            System.out.println(followList);
+                    if(!queryDocumentSnapshots.isEmpty()){
+                        String username = (String) queryDocumentSnapshots.getDocuments().get(0).getData().get("username");
+                        firestore.collection("Users").whereEqualTo("username",username).get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                if (!queryDocumentSnapshots.isEmpty()){
+                                    List followList = new ArrayList();
+                                    followList = (List) queryDocumentSnapshots.getDocuments().get(0).getData().get("Following");
+                                    System.out.println(followList);
 
-                            firestore.collection("Posts").orderBy("date", Query.Direction.DESCENDING).whereIn("username",followList).addSnapshotListener(new EventListener<QuerySnapshot>() {
-                                @Override
-                                public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                                    if(error!=null){
-                                        System.out.println(error.getMessage());
-                                        Toast.makeText(getApplicationContext(), error.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+
+                                    if(followList != null){
+                                        firestore.collection("Posts")
+                                                .orderBy("date", Query.Direction.DESCENDING)
+                                                .whereIn("username",followList)
+                                                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                                    @Override
+                                                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                                                        if(error!=null){
+                                                            System.out.println(error.getMessage());
+                                                            Toast.makeText(getApplicationContext(), error.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+                                                        }
+
+                                                        if(value != null){
+                                                            for (DocumentSnapshot snapshot : value.getDocuments()){
+                                                                Map<String,Object> map = snapshot.getData();
+                                                                String[] data =  {(String) map.get("email"), (String) map.get("comment"), (String) map.get("downloadUri"), (String) map.get("username"), String.valueOf(map.get("date")), (String)map.get("profilePhoto")};
+                                                                System.out.println(data[0]);
+
+                                                                Post post = new Post(data[0], data[1], data[2], data[3], data[4],data[5]);
+                                                                postArrayList.add(post);
+
+                                                            }
+
+                                                            postAdapter.notifyDataSetChanged();
+
+
+                                                        }
+                                                    }
+                                                });
                                     }
-
-                                    if(value != null){
-                                        for (DocumentSnapshot snapshot : value.getDocuments()){
-                                            Map<String,Object> map = snapshot.getData();
-                                            String[] data =  {(String) map.get("email"), (String) map.get("comment"), (String) map.get("downloadUri"), (String) map.get("username"), String.valueOf(map.get("date")), (String)map.get("profilePhoto")};
-                                            System.out.println(data[0]);
-
-                                            Post post = new Post(data[0], data[1], data[2], data[3], data[4],data[5]);
-                                            postArrayList.add(post);
-
-                                        }
-
-                                        postAdapter.notifyDataSetChanged();
-
-
-                                    }
+                                }else {
+                                    Toast.makeText(getApplicationContext(),"No Data",Toast.LENGTH_LONG).show();
                                 }
-                            });
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            System.out.println(e.getMessage());
-                            Toast.makeText(getApplicationContext(),e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    });
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                System.out.println(e.getMessage());
+                                Toast.makeText(getApplicationContext(),e.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
                 }
-            }).addOnFailureListener(new OnFailureListener() {
+            }).addOnFailureListener(new OnFailureListener()
+            {
                 @Override
                 public void onFailure(@NonNull Exception e) {
                     System.out.println(e.getMessage());
