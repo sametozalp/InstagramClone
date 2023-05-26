@@ -160,4 +160,12 @@ public class DiscoveryStream extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), MyProfile.class);
         startActivity(intent);
     }
+
+    public void goToMainStream(View view){
+        Intent intent = new Intent(getApplicationContext(), MainStream.class);
+        startActivity(intent);
+    }
+
+    public void goToDiscoveryStream(View view){
+    }
 }

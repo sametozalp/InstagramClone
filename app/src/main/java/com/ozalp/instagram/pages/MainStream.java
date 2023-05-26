@@ -1,18 +1,30 @@
 package com.ozalp.instagram.pages;
 
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -35,7 +47,10 @@ public class MainStream extends AppCompatActivity {
     FirebaseFirestore firestore;
     PostAdapter postAdapter;
     ArrayList<Post> postArrayList;
+    Uri imageData;
     FirebaseAuth auth;
+    ActivityResultLauncher<Intent> activityResultLauncher;
+    ActivityResultLauncher <String> permissionLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +64,7 @@ public class MainStream extends AppCompatActivity {
         postArrayList = new ArrayList<>();
         postAdapter = new PostAdapter(postArrayList);
 
+        registerLauncher();
         recycleData();
         binding.mainRecycleView.setLayoutManager(new LinearLayoutManager(this));
         postAdapter = new PostAdapter(postArrayList);
@@ -134,4 +150,75 @@ public class MainStream extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), MyProfile.class);
         startActivity(intent);
     }
+
+    public void goToMainStream(View view){
+        if(getClass().getSimpleName().matches("MainStream")){
+
+        }
+    }
+
+    public void goToDiscoveryStream(View view){
+        System.out.println(getClass().getSimpleName());
+        Intent intent = new Intent(getApplicationContext(), DiscoveryStream.class);
+        startActivity(intent);
+    }
+
+    public void goToFile(View view){
+        if(ContextCompat.checkSelfPermission(this, READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
+            System.out.println("PERMISSON DENIED");
+            if(ActivityCompat.shouldShowRequestPermissionRationale(this,READ_EXTERNAL_STORAGE)){
+                //-----Click link and give permission
+                Snackbar.make(view,"Not available to gallery", Snackbar.LENGTH_INDEFINITE).setAction("Give Permission!", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //ask permission
+                        permissionLauncher.launch(READ_EXTERNAL_STORAGE);
+                    }
+                }).show();
+                //-------
+            } else{
+                //ask permission
+                permissionLauncher.launch(READ_EXTERNAL_STORAGE);
+            }
+        }else {
+            Intent intentToGallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            activityResultLauncher.launch(intentToGallery);
+        }
+    }
+
+    private void registerLauncher(){
+        activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+                if(result.getResultCode() == RESULT_OK){
+                    Intent intentFromResult = result.getData();
+
+                    if(intentFromResult != null){
+                        imageData = intentFromResult.getData();
+                        System.out.println("image url:" + imageData);
+
+                        Intent uploadPage = new Intent(getApplicationContext(), UploadPost.class);
+                        uploadPage.putExtra("data",imageData.toString());
+                        startActivity(uploadPage);
+
+                    }
+                }
+            }
+        });
+
+        permissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), new ActivityResultCallback<Boolean>() {
+            @Override
+            public void onActivityResult(Boolean result) {
+                if(result){
+                    Intent intentToGallery = new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    activityResultLauncher.launch(intentToGallery);
+                }else {
+                    Toast.makeText(getApplicationContext(),"Permission needed!",Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+
+    }
+
 }
