@@ -125,6 +125,8 @@ public class MyProfile extends AppCompatActivity {
         binding.discoveryRecycleView.setLayoutManager(new LinearLayoutManager(this));
         postAdapter = new PostAdapter(postArrayList);
         binding.discoveryRecycleView.setAdapter(postAdapter);
+
+
     }
 
     private void editFollowersAndFollowing(){
@@ -155,45 +157,48 @@ public class MyProfile extends AppCompatActivity {
                                 List followersListGet = new ArrayList();
                                 followersListGet = (List) followersList.get(0);
                                 System.out.println(followersListGet);
+                                System.out.println("deneme");
+                                if(followersListGet!=null){
+                                    if(followersListGet.contains(username)){
+                                        binding.goToEditProfile.setText("Following");
+                                        binding.goToEditProfile.setBackgroundColor(Color.GRAY);
+                                        goToEditProfile.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                Map q = new HashMap();
+                                                q.put("Following",q.put("Following", FieldValue.arrayRemove(username)));
+                                                q.put("following",FieldValue.increment(-1));
+                                                firestore.collection("Users").document(username).set(q,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void unused) {
+                                                        Map p = new HashMap();
+                                                        p.put("Followers",p.put("Followers",FieldValue.arrayRemove(username)));
+                                                        p.put("followers",FieldValue.increment(-1));
 
-                                if(followersListGet.contains(username)){
-                                    binding.goToEditProfile.setText("Following");
-                                    binding.goToEditProfile.setBackgroundColor(Color.GRAY);
-                                    goToEditProfile.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            Map q = new HashMap();
-                                            q.put("Following",q.put("Following", FieldValue.arrayRemove(username)));
-                                            q.put("following",FieldValue.increment(-1));
-                                            firestore.collection("Users").document(username).set(q,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void unused) {
-                                                    Map p = new HashMap();
-                                                    p.put("Followers",p.put("Followers",FieldValue.arrayRemove(username)));
-                                                    p.put("followers",FieldValue.increment(-1));
-
-                                                    firestore.collection("Users").document(takenUsername).set(p,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                        @Override
-                                                        public void onSuccess(Void unused) {
-                                                            binding.goToEditProfile.setText("Follow");
-                                                            binding.goToEditProfile.setBackgroundColor(Color.parseColor("#6200ee"));
-                                                        }
-                                                    }).addOnFailureListener(new OnFailureListener() {
-                                                        @Override
-                                                        public void onFailure(@NonNull Exception e) {
-                                                            Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
-                                                        }
-                                                    });
-                                                }
-                                            }).addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
-                                                }
-                                            });
-                                        }
-                                    });
+                                                        firestore.collection("Users").document(takenUsername).set(p,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                            @Override
+                                                            public void onSuccess(Void unused) {
+                                                                binding.goToEditProfile.setText("Follow");
+                                                                binding.goToEditProfile.setBackgroundColor(Color.parseColor("#6200ee"));
+                                                            }
+                                                        }).addOnFailureListener(new OnFailureListener() {
+                                                            @Override
+                                                            public void onFailure(@NonNull Exception e) {
+                                                                Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+                                                            }
+                                                        });
+                                                    }
+                                                }).addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
                                 }
+
                             }
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
@@ -207,8 +212,6 @@ public class MyProfile extends AppCompatActivity {
                 System.out.println(e.getMessage());
                 Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
             }
-        }else {
-            goToEditProfile.setOnClickListener(null);
         }
     }
 
@@ -346,10 +349,6 @@ public class MyProfile extends AppCompatActivity {
                             String myEmail = auth.getCurrentUser().getEmail();
                             if(myEmail.equals(email)){
                                 binding.goToEditProfile.setText("Edit profile");
-
-                                Intent intent = new Intent(getApplicationContext(), EditProfile.class);
-                                startActivity(intent);
-
 
                                 binding.goToEditProfile.setOnClickListener(new View.OnClickListener() {
                                     @Override

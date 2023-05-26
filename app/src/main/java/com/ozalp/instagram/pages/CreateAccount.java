@@ -18,7 +18,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.ozalp.instagram.databinding.ActivityCreateAccountBinding;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class CreateAccount extends AppCompatActivity {
 
@@ -95,7 +97,6 @@ public class CreateAccount extends AppCompatActivity {
                                                                     public void onSuccess(AuthResult authResult) {
 
                                                                         HashMap<String, Object> map = new HashMap<>();
-                                                                        //map.put("password", password);
                                                                         map.put("followers", 0);
                                                                         map.put("following", 0);
                                                                         map.put("posts", 0);
@@ -105,6 +106,7 @@ public class CreateAccount extends AppCompatActivity {
                                                                                 "https://firebasestorage.googleapis.com/v0/b/instagram-155fd.appspot.com/o/nophoto.jpg?alt=media&token=3596685c-39ae-48bc-a5b1-cee53732dd12");
                                                                         map.put("email", email);
                                                                         map.put("username", username);
+                                                                        map.put("Following",map.put("Following",FieldValue.arrayUnion(username)));
                                                                         map.put("signUpDate", FieldValue.serverTimestamp());
 
                                                                         firestore.collection("Users").document(username).set(map)
@@ -154,7 +156,3 @@ public class CreateAccount extends AppCompatActivity {
         }
     }
 }
-
-/*
-
- */

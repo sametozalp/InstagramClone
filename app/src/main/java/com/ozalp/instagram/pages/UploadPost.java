@@ -19,12 +19,14 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.UploadTask;
 import com.ozalp.instagram.databinding.ActivityUploadPostBinding;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class UploadPost extends AppCompatActivity {
@@ -102,7 +104,22 @@ public class UploadPost extends AppCompatActivity {
                                                         firestore.collection("Posts").add(map).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                                             @Override
                                                             public void onSuccess(DocumentReference documentReference) {
-
+                                                                Map m = new HashMap();
+                                                                m.put("posts",FieldValue.increment(1));
+                                                                firestore.collection("Users").document(username).set(m, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                    @Override
+                                                                    public void onSuccess(Void unused) {
+                                                                        Intent intent = new Intent(getApplicationContext(),MainStream.class);
+                                                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                                        startActivity(intent);
+                                                                        finish();
+                                                                    }
+                                                                }).addOnFailureListener(new OnFailureListener() {
+                                                                    @Override
+                                                                    public void onFailure(@NonNull Exception e) {
+                                                                        Toast.makeText(getApplicationContext(),e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+                                                                    }
+                                                                });
 
 
                                                             }
@@ -125,9 +142,7 @@ public class UploadPost extends AppCompatActivity {
                                         }
                                     });
 
-                                    Intent intent = new Intent(getApplicationContext(),DiscoveryStream.class);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    startActivity(intent);
+
 
 
                                 }
