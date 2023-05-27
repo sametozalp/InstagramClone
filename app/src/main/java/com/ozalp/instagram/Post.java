@@ -1,7 +1,5 @@
 package com.ozalp.instagram;
 
-import java.util.Date;
-
 public class Post {
     String email;
     String comment;

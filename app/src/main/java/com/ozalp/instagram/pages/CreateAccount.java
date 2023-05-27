@@ -106,7 +106,9 @@ public class CreateAccount extends AppCompatActivity {
                                                                                 "https://firebasestorage.googleapis.com/v0/b/instagram-155fd.appspot.com/o/nophoto.jpg?alt=media&token=3596685c-39ae-48bc-a5b1-cee53732dd12");
                                                                         map.put("email", email);
                                                                         map.put("username", username);
-                                                                        map.put("Following",map.put("Following",FieldValue.arrayUnion(username)));
+                                                                        List l = new ArrayList<>();
+                                                                        map.put("Following",l);
+                                                                        map.put("Followers",l);
                                                                         map.put("signUpDate", FieldValue.serverTimestamp());
 
                                                                         firestore.collection("Users").document(username).set(map)

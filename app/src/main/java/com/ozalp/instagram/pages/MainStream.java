@@ -86,10 +86,11 @@ public class MainStream extends AppCompatActivity {
                                 if (!queryDocumentSnapshots.isEmpty()){
                                     List followList = new ArrayList();
                                     followList = (List) queryDocumentSnapshots.getDocuments().get(0).getData().get("Following");
-                                    System.out.println(followList);
-
-
-                                    if(followList != null){
+                                    boolean a = false;
+                                    if (followList == null || followList.size() == 0){
+                                        a = true;
+                                    }
+                                    if(a == false) {
                                         firestore.collection("Posts")
                                                 .orderBy("date", Query.Direction.DESCENDING)
                                                 .whereIn("username",followList)
@@ -105,7 +106,6 @@ public class MainStream extends AppCompatActivity {
                                                             for (DocumentSnapshot snapshot : value.getDocuments()){
                                                                 Map<String,Object> map = snapshot.getData();
                                                                 String[] data =  {(String) map.get("email"), (String) map.get("comment"), (String) map.get("downloadUri"), (String) map.get("username"), String.valueOf(map.get("date")), (String)map.get("profilePhoto")};
-                                                                System.out.println(data[0]);
 
                                                                 Post post = new Post(data[0], data[1], data[2], data[3], data[4],data[5]);
                                                                 postArrayList.add(post);
@@ -158,7 +158,6 @@ public class MainStream extends AppCompatActivity {
     }
 
     public void goToDiscoveryStream(View view){
-        System.out.println(getClass().getSimpleName());
         Intent intent = new Intent(getApplicationContext(), DiscoveryStream.class);
         startActivity(intent);
     }

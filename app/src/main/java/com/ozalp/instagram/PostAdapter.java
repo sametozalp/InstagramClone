@@ -38,7 +38,6 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
         long c = Long.parseLong(String.valueOf(postArrayList.get(position).date.substring(18,28)));
         c = c * 1000;
         Timestamp a = new Timestamp(c);
-        System.out.println(a);
         holder.recycleRowBinding.date.setText(a.toString().substring(0,a.toString().indexOf(".")-3));
 
         if(!postArrayList.get(position).comment.isEmpty()){

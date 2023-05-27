@@ -129,6 +129,22 @@ public class MyProfile extends AppCompatActivity {
 
     }
 
+    public void followersData(View view){
+        String id = "followersData";
+        Intent intent = new Intent(getApplicationContext(), FollowersAndFollowingList.class);
+        intent.putExtra("takenUsername",takenUsername);
+        intent.putExtra("id",id);
+        startActivity(intent);
+    }
+
+    public void followingData(View view){
+        String id = "followingData";
+        Intent intent = new Intent(getApplicationContext(), FollowersAndFollowingList.class);
+        intent.putExtra("takenUsername",takenUsername);
+        intent.putExtra("id",id);
+        startActivity(intent);
+    }
+
     private void editFollowersAndFollowing(){
 
         if(!(takenUsername == null)){
@@ -153,11 +169,8 @@ public class MyProfile extends AppCompatActivity {
                             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
                                 //His follower list
                                 followersList.add(queryDocumentSnapshots.getDocuments().get(0).getData().get("Followers"));
-                                System.out.println(queryDocumentSnapshots.getDocuments().get(0).getData().get("Followers"));
                                 List followersListGet = new ArrayList();
                                 followersListGet = (List) followersList.get(0);
-                                System.out.println(followersListGet);
-                                System.out.println("deneme");
                                 if(followersListGet!=null){
                                     if(followersListGet.contains(username)){
                                         binding.goToEditProfile.setText("Following");
@@ -230,7 +243,6 @@ public class MyProfile extends AppCompatActivity {
                             for (DocumentSnapshot snapshot : value.getDocuments()){
                                 Map<String,Object> map = snapshot.getData();
                                 String[] data =  {(String) map.get("email"), (String) map.get("comment"), (String) map.get("downloadUri"), (String) map.get("username"), String.valueOf(map.get("date")), (String)map.get("profilePhoto")};
-                                System.out.println(data[0]);
 
                                 Post post = new Post(data[0], data[1], data[2], data[3], data[4],data[5]);
                                 postArrayList.add(post);
@@ -254,7 +266,6 @@ public class MyProfile extends AppCompatActivity {
                             for (DocumentSnapshot snapshot : value.getDocuments()){
                                 Map<String,Object> map = snapshot.getData();
                                 String[] data =  {(String) map.get("email"), (String) map.get("comment"), (String) map.get("downloadUri"), (String) map.get("username"), String.valueOf(map.get("date")), (String)map.get("profilePhoto")};
-                                System.out.println(data[0]);
 
                                 Post post = new Post(data[0], data[1], data[2], data[3], data[4],data[5]);
                                 postArrayList.add(post);
@@ -375,7 +386,6 @@ public class MyProfile extends AppCompatActivity {
                 });
             }else{
                 String myEmail = auth.getCurrentUser().getEmail();
-                System.out.println(myEmail);
                 firestore.collection("Users").whereEqualTo("email",myEmail).addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException error) {
