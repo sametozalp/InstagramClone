@@ -10,3 +10,5 @@ Application Features:
 -Follow and unfollow functionality. 
 Firebase database is used. 
 Library used for asynchronous photo downloading: Picasso. 
+
+https://www.youtube.com/watch?v=fgJPlIDoaWM
