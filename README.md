@@ -10,4 +10,3 @@ Application Features:
 -Follow and unfollow functionality. 
 Firebase database is used. 
 Library used for asynchronous photo downloading: Picasso. 
-And, of course, I must thank my instructor, Atıl Samancıoğlu, for his efforts.
