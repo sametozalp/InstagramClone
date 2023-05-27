@@ -9,6 +9,7 @@ Application Features:
 -Main menu (Only shows posts from followed users).
 
 -Explore (Displays posts from all users).
+
 -Profile visits.
 
 -Follow and unfollow functionality. 
